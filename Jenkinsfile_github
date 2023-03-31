@@ -24,7 +24,7 @@ podTemplate(label: label, serviceAccount: 'jenkins-admin', namespace: P_NAMESPAC
        stage('Clone Git Project') {
             sh "pwd"
             echo 'Clone'
-            git branch: 'master', credentialsId: 'github_ci_edu7', url: 'https://github.com/kubehatesme/edu12-4.git'
+            git branch: 'master', credentialsId: 'github_ci_edu7_new', url: 'https://github.com/kubehatesme/edu12-4.git'
             sh "ls"
         }
   //./mvnw clean package jib:build  -Dmaven.test.skip=true  \
@@ -33,7 +33,7 @@ podTemplate(label: label, serviceAccount: 'jenkins-admin', namespace: P_NAMESPAC
                      
       stage('Maven Build & Image Push ') {
             container('build-tools') {
-               withCredentials([usernamePassword(credentialsId: 'github_ci_edu7',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
+               withCredentials([usernamePassword(credentialsId: 'github_ci_edu7_new',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
                     sh  """
                          ./mvnw clean package jib:build  -Dmaven.test.skip=true  \
                          -Djib.from.image=${fromImage} \
@@ -51,7 +51,7 @@ podTemplate(label: label, serviceAccount: 'jenkins-admin', namespace: P_NAMESPAC
 
         stage('GitOps update') {
             container('build-tools') {
-               withCredentials([usernamePassword(credentialsId: 'github_ci_edu7',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
+               withCredentials([usernamePassword(credentialsId: 'github_ci_edu7_new',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
                     sh """  
                         cd ~
                         git clone https://${USERNAME}:${PASSWORD}@github.com/${USERNAME}/${git_ops_name}
