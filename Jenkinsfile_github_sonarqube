@@ -1,10 +1,10 @@
 def label = "agent-${UUID.randomUUID().toString()}"
 def gitBranch = 'master'
 def docker_registry = "ghcr.io"  
-def imageName = "ghcr.io/shclub/edu12-backend"
-def fromImage = "ghcr.io/shclub/jre17-runtime:v1.0.0"
+def imageName = "ghcr.io/kubehatesme/edu12-backend"
+def fromImage = "ghcr.io/kubehatesme/jre17-runtime:v1.0.0"
 def git_ops_name = "edu12-backend-gitops"
-def P_NAMESPACE = "edu30"
+def P_NAMESPACE = "edu7"
 
 def TAG = getTag(gitBranch)
 
@@ -43,7 +43,7 @@ podTemplate(label: label, serviceAccount: 'jenkins-admin', namespace: P_NAMESPAC
        
        stage('Maven Build & Image Push ') {
             container('build-tools') {
-               withCredentials([usernamePassword(credentialsId: 'github_ci',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
+               withCredentials([usernamePassword(credentialsId: 'github_ci_edu7_new',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
                     sh  """
                          ./mvnw clean package jib:build  -Dmaven.test.skip=true  \
                          -Djib.from.image=${fromImage} \
@@ -61,14 +61,14 @@ podTemplate(label: label, serviceAccount: 'jenkins-admin', namespace: P_NAMESPAC
 
         stage('GitOps update') {
             container('build-tools') {
-               withCredentials([usernamePassword(credentialsId: 'github_ci',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
+               withCredentials([usernamePassword(credentialsId: 'github_ci_edu7_new',usernameVariable: 'USERNAME',passwordVariable: 'PASSWORD')]) {
                     sh """  
                         cd ~
                         git clone https://${USERNAME}:${PASSWORD}@github.com/${USERNAME}/${git_ops_name}
                         cd ${git_ops_name}
                         git checkout HEAD
                         kustomize edit set image ${imageName}:${TAG}
-                        git config --global user.email "shclub@gmail.com"
+                        git config --global user.email "ukaris1004@gmail.com"
                         git config --global user.name ${USERNAME}
                         git add .
                         git commit -am 'update image tag  ${TAG} from My_Jenkins'
